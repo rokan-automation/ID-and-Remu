@@ -82,6 +82,20 @@ supabase_setup.sql              ← নতুন Supabase প্রজেক্�
 .env.example                   ← কোন env variable লাগবে তার টেমপ্লেট
 ```
 
+## ⏰ Supabase অটো-পজ এড়ানো (Keep-Alive Cron)
+
+Supabase Free Tier-এ ৭ দিন কোনো activity না থাকলে প্রজেক্ট অটোমেটিক pause
+হয়ে যায়। এটা এড়াতে একটা Vercel Cron Job যুক্ত করা হয়েছে যা রোজ একবার
+(`/api/cron/keep-alive`) একটা হালকা কোয়েরি চালিয়ে Supabase-কে "active" রাখে।
+
+- এটা `vercel.json` ফাইলে ডিফাইন করা আছে — কোনো extra সেটআপ লাগবে না,
+  Vercel-এ ডিপ্লয় করলেই এটা নিজে থেকে শিডিউল হয়ে যাবে।
+- চেক করতে: Vercel Dashboard → আপনার প্রজেক্ট → **Settings → Cron Jobs**
+  এ গিয়ে দেখুন `keep-alive` জব লিস্টে আছে কিনা।
+- ঐচ্ছিক (অতিরিক্ত সুরক্ষা): `.env` এ একটা `CRON_SECRET` (কোনো র‍্যান্ডম
+  স্ট্রিং) যুক্ত করলে শুধু Vercel-এর নিজের cron কলই এই এন্ডপয়েন্ট চালাতে
+  পারবে, অন্য কেউ URL জেনে বারবার হিট করতে পারবে না।
+
 ## ⚠️ এখনো যা মনে রাখা ভালো
 
 - `ADMIN_PASSWORD` আর `SESSION_SECRET` — এই দুইটা কাউকে শেয়ার করবেন না,
@@ -90,4 +104,5 @@ supabase_setup.sql              ← নতুন Supabase প্রজেক্�
   ইন্টারনেটে ঠিকানা জানলে কেউ স্প্যাম এন্ট্রি জমা দিতে পারে। ভবিষ্যতে চাইলে
   এখানে reCAPTCHA বা rate-limiting যুক্ত করা যায়।
 - Supabase-এর ফ্রি প্ল্যানে ~৭ দিন প্রজেক্ট অব্যবহৃত থাকলে সেটা pause হয়ে
-  যায় — Dashboard এ গিয়ে Restore করে নিতে হবে।
+  যায় — উপরে বর্ণিত keep-alive cron চালু থাকলে এটা হওয়ার কথা না, কিন্তু
+  যদি তাও pause হয়ে যায়, Supabase Dashboard এ গিয়ে Restore করে নিতে হবে।
